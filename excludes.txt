@@ -1,0 +1,4 @@
+# Paths in My Drive to SKIP. One rclone filter pattern per line.
+# A leading / means "from the top of My Drive"; /** means "and everything inside".
+# To keep one class anyway, add it to shared_items.txt with the ID  mydrive
+/Classroom/**

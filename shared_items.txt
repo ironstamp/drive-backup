@@ -1,0 +1,19 @@
+# Shared-drive items to back up - one per line:
+#
+#   SharedDriveID | Label for local folder | Path inside that shared drive
+#
+# - Get the IDs with:   rclone backend drives gdrive:
+# - Leave the path empty to copy the WHOLE shared drive.
+# - The path can be a folder or a single file.
+# - Google files show up WITH their converted extension, e.g. a Google Doc
+#   called "Unit Plan" must be written as "Unit Plan.docx". Check exact names with:
+#     rclone lsf "gdrive,team_drive=THE_ID:Some Folder" --drive-export-formats docx,xlsx,pptx,svg
+# - Lines starting with # are ignored.
+# - To pull back a folder from YOUR OWN Drive that excludes.txt skips (e.g. one
+#   Classroom class), use  mydrive  as the ID. The label is ignored for these.
+#
+# Examples (delete or replace these):
+# 0AbCdEfGhIjKlUk9PVA | Maths Department | Year 12 Calculus
+# 0AbCdEfGhIjKlUk9PVA | Maths Department | Assessments/2026/L2 Internal.docx
+# 0XyZ123456789Uk9PVA | Rowing           |
+# mydrive     | Classroom        | Classroom/MATHS Y12 Calculus PC 2026 Year 12

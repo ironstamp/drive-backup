@@ -1,0 +1,5 @@
+DriveBackup/
+ClassroomArchive/
+*.log
+__pycache__/
+.DS_Store
