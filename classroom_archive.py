@@ -104,10 +104,19 @@ def main():
     ap.add_argument("--dry-run", action="store_true", help="list what would happen, download nothing")
     a = ap.parse_args()
 
-    with open(a.csv, newline="", encoding="utf-8-sig") as f:
-        reader = csv.DictReader(f)
-        fields = reader.fieldnames
-        rows = list(reader)
+    # Google Sheets downloads are UTF-8; a CSV re-saved in Excel is often Windows-1252.
+    for enc in ("utf-8-sig", "cp1252"):
+        try:
+            with open(a.csv, newline="", encoding=enc) as f:
+                reader = csv.DictReader(f)
+                fields = reader.fieldnames
+                rows = list(reader)
+            break
+        except UnicodeDecodeError:
+            continue
+    else:
+        sys.exit("Couldn't read the CSV's text encoding - download it again from Google Sheets "
+                 "(File > Download > Comma-separated values) without opening it in Excel.")
     if not fields or "LINKS" not in fields:
         sys.exit("This doesn't look like a Classroom tool export (no LINKS column).")
 
