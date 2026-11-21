@@ -37,6 +37,26 @@ $Common = @(
 )
 if ($DryRun) { $Common += "--dry-run"; Write-Host ">>> DRY RUN - nothing will be copied" }
 
+# ---- 0. Check the Google sign-in before doing anything --------------------
+Write-Host ">>> Checking Google sign-in..."
+$checkOut = (& rclone lsd "${Remote}:" --max-depth 1 2>&1 | Out-String)
+if ($LASTEXITCODE -ne 0) {
+  Write-Host ""
+  if ($checkOut -match "invalid_grant|token expired|expired or revoked") {
+    Write-Host "!!! Your Google sign-in has expired (this happens every 7 days while your"
+    Write-Host "    Cloud app is in Testing mode). Run this, sign in, then run the backup again:"
+    Write-Host ""
+    Write-Host "      rclone config reconnect ${Remote}:"
+  } elseif ($checkOut -match "didn't find section in config") {
+    Write-Host "!!! There's no rclone connection called '$Remote'. Check with: rclone listremotes"
+  } else {
+    $last = ($checkOut.Trim() -split "`r?`n")[-1]
+    Write-Host "!!! Couldn't reach Google Drive:"
+    Write-Host "    $last"
+  }
+  exit 1
+}
+
 $failures = 0
 
 # ---- 1. My Drive ----------------------------------------------------------

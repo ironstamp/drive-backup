@@ -70,6 +70,25 @@ def run_rclone(args):
     return r.returncode == 0, (msg[-1] if msg else "")
 
 
+def check_signin(remote):
+    """Stop early with a clear message if rclone can't reach Google Drive."""
+    try:
+        r = subprocess.run(["rclone", "lsd", f"{remote}:", "--max-depth", "1"], capture_output=True, text=True)
+    except FileNotFoundError:
+        sys.exit("rclone not found - install it and make sure it's on your PATH.")
+    if r.returncode == 0:
+        return
+    out = (r.stderr or "") + (r.stdout or "")
+    if re.search(r"invalid_grant|token expired|expired or revoked", out, re.I):
+        sys.exit("Your Google sign-in has expired (this happens every 7 days while your Cloud app\n"
+                 "is in Testing mode). Run this, sign in, then run the archive again:\n\n"
+                 f"    rclone config reconnect {remote}:")
+    if "didn't find section in config" in out:
+        sys.exit(f"There's no rclone connection called '{remote}'. Check with: rclone listremotes")
+    last = out.strip().splitlines()[-1] if out.strip() else "unknown error"
+    sys.exit(f"Couldn't reach Google Drive:\n    {last}")
+
+
 def download_file(remote, file_id, post_dir: Path, tmp_root: Path):
     """Download one Drive file by ID into post_dir. Returns (ok, path or error)."""
     tmp = tmp_root / file_id
@@ -103,6 +122,9 @@ def main():
     ap.add_argument("--remote", default="gdrive", help="rclone remote name (default gdrive)")
     ap.add_argument("--dry-run", action="store_true", help="list what would happen, download nothing")
     a = ap.parse_args()
+    if not a.dry_run:
+        print("Checking Google sign-in...")
+        check_signin(a.remote)
 
     # Google Sheets downloads are UTF-8; a CSV re-saved in Excel is often Windows-1252.
     for enc in ("utf-8-sig", "cp1252"):
