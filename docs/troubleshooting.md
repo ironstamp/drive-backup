@@ -38,8 +38,8 @@ That's rclone's **shared** client ID, overloaded by other users. Set up your own
 ### `This remote uses rclone's shared Google Drive client_id, which is being retired`
 Same fix: [create your own client ID](google-cloud-setup.md).
 
-### `invalid_grant`, `Token has been expired or revoked`, or "token expired"
-Your sign-in has lapsed. This usually happens after 7 days with a Cloud app in Testing mode. Run:
+### "Your Google sign-in has expired", `invalid_grant`, `Token has been expired or revoked`, or "token expired"
+Your sign-in has lapsed. The scripts check the sign-in before starting and stop with this message, rather than reporting every item as failed or "Not found". This usually happens after 7 days with a Cloud app in Testing mode. Run:
 
 ```
 rclone config reconnect gdrive:

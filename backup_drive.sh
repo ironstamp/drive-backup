@@ -48,6 +48,24 @@ for arg in "$@"; do
   esac
 done
 
+# ---- 0. Check the Google sign-in before doing anything --------------------
+echo ">>> Checking Google sign-in..."
+if ! check_out="$(rclone lsd "${REMOTE}:" --max-depth 1 2>&1)"; then
+  echo
+  if grep -qiE "invalid_grant|token expired|expired or revoked" <<<"$check_out"; then
+    echo "!!! Your Google sign-in has expired (this happens every 7 days while your"
+    echo "    Cloud app is in Testing mode). Run this, sign in, then run the backup again:"
+    echo
+    echo "      rclone config reconnect ${REMOTE}:"
+  elif grep -qi "didn't find section in config" <<<"$check_out"; then
+    echo "!!! There's no rclone connection called '${REMOTE}'. Check with: rclone listremotes"
+  else
+    echo "!!! Couldn't reach Google Drive:"
+    echo "    $(tail -n 1 <<<"$check_out")"
+  fi
+  exit 1
+fi
+
 failures=0
 
 # ---- 1. My Drive ----------------------------------------------------------
