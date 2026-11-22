@@ -49,7 +49,9 @@ In Classroom Manager → **Upload Course**:
 3. Check the preview: number of files to upload, web links, and any missing-file warnings.
 4. Click **Create Course**.
 
-The tool uploads the files into a new Drive folder, *"<course name> - course files"* (converting Word/Excel/PowerPoint back to Google formats unless you untick that option), then creates the course with every post as a **draft with no due date**, ready to publish and date as you teach. The new class is activated so it appears in your Classroom list.
+The tool uploads the files into a new Drive folder, *"<course name> - course files"*, then creates the course with every post as a **draft with no due date**, ready to publish and date as you teach. The new class is activated so it appears in your Classroom list.
+
+**File formats.** Files that were originally Google Docs, Sheets or Slides are turned back into Google format. Files that were uploaded to Classroom as Word, Excel or PowerPoint stay exactly as they are, so their formatting (equations, text boxes, macros) isn't changed by a conversion. The tool tells them apart using `manifest.csv`, which records each file's original link. Untick the option to keep every file in its archived Office format.
 
 If an upload is interrupted, run it again **with the same course name**: files already in Drive are found and reused rather than uploaded twice. Don't delete the "course files" folder: the class's attachments live there.
 
